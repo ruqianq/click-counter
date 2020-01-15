@@ -16,20 +16,6 @@ function roundTimeStampToHour(timeStamp) {
     return dt.getTime();
 }
 
-function findMaxClickPerPeriod(clicks, maxClicks = []) {
-    const startPeriod = roundTimeStampToHour(clicks[0].timestamp);
-    const clicksInPeriod = [];
-    for (let i = 0; i < clicks.length; i++) {
-        const clickTime = roundTimeStampToHour(clicks[i].timestamp);
-        if (clickTime === startPeriod) {
-            clicksInPeriod.push(clicks[i])
-        } else {
-            const maxClick = findMaxClick(clicksInPeriod);
-            maxClicks.push(maxClick);
-            return findMaxClickPerPeriod(clicks.slice(i), maxClicks)
-        }
-    }
-    return maxClicks
 
     // const startPeriod = new Date(clicks[0].timestamp).getHours() + 1;
     // const clicksInPeriod = [];
@@ -44,7 +30,6 @@ function findMaxClickPerPeriod(clicks, maxClicks = []) {
     //     }
     // }
     // return maxClicks
-}
 
 function findMaxClick(clicksInPeriod) {
     return clicksInPeriod.reduce((max, c) => {
@@ -52,14 +37,13 @@ function findMaxClick(clicksInPeriod) {
     }, clicksInPeriod[0])
 }
 
-function groupByIp(clicks) {
-    // lodash's _.groupBy can also achieve the same result
+function groupByProperty(clicks, property) {
     return clicks.reduce((acc, obj) => {
-        if (! acc[obj.ip]) {
-            acc[obj.ip] = [];
+        const key = obj[property];
+        if (! acc[key]) {
+            acc[key] = [];
         }
-        acc[obj.ip].push(obj);
-
+        acc[key].push(obj);
         return acc
     }, {})
 }
@@ -83,5 +67,5 @@ function doStatistics( inputData, outputFile ) {
 }
 
 module.exports.doStatistics = doStatistics;
-module.exports.returnMaxClicksByPeriod = returnMaxClicksByPeriod;
 module.exports.roundTimeStampToHour = roundTimeStampToHour;
+module.exports.groupByProperty = groupByProperty;

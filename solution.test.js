@@ -1,23 +1,11 @@
-const { returnMaxClicksByPeriod, roundTimeStampToHour } = require('./solution_Daisy_Lin.js');
+const { roundTimeStampToHour, groupByProperty } = require('./solution_Daisy_Lin.js');
 
-const data = [
+const testData = [
     {"ip": "22.22.22.22", "timestamp": "3/11/2016 02:02:58", "amount": 7.00},
     {"ip": "11.11.11.11", "timestamp": "3/11/2016 02:12:32", "amount": 6.50},
     {"ip": "11.11.11.11", "timestamp": "3/11/2016 02:13:11", "amount": 7.25},
     {"ip": "44.44.44.44", "timestamp": "3/11/2016 02:13:54", "amount": 8.75},
     {"ip": "22.22.22.22", "timestamp": "3/11/2016 05:02:45", "amount": 11.00},
-    {"ip": "44.44.44.44", "timestamp": "3/11/2016 06:32:42", "amount": 5.00},
-    {"ip": "44.44.44.44", "timestamp": "3/11/2016 06:32:42", "amount": 5.00},
-    {"ip": "44.44.44.44", "timestamp": "3/11/2016 06:32:42", "amount": 5.00},
-    {"ip": "44.44.44.44", "timestamp": "3/11/2016 06:32:42", "amount": 5.00},
-    {"ip": "44.44.44.44", "timestamp": "3/11/2016 06:32:42", "amount": 5.00},
-    {"ip": "44.44.44.44", "timestamp": "3/11/2016 06:32:42", "amount": 5.00},
-    {"ip": "44.44.44.44", "timestamp": "3/11/2016 06:32:42", "amount": 5.00},
-    {"ip": "44.44.44.44", "timestamp": "3/11/2016 06:32:42", "amount": 5.00},
-    {"ip": "44.44.44.44", "timestamp": "3/11/2016 06:32:42", "amount": 5.00},
-    {"ip": "44.44.44.44", "timestamp": "3/11/2016 06:32:42", "amount": 5.00},
-    {"ip": "44.44.44.44", "timestamp": "3/11/2016 06:32:42", "amount": 5.00},
-    {"ip": "22.22.22.22", "timestamp": "3/11/2016 06:35:12", "amount": 2.00},
     {"ip": "22.22.22.22", "timestamp": "3/12/2016 06:35:12", "amount": 2.00},
 ];
 
@@ -30,11 +18,11 @@ const expectedResultIncorrect = {
     ]
 };
 
-const expectedResult = [
-    {"ip": "11.11.11.11", "timestamp": "3/11/2016 02:13:11", "amount": 7.25},
-    {"ip": "22.22.22.22", "timestamp": "3/11/2016 06:35:12", "amount": 2.00},
-    {"ip": "22.22.22.22", "timestamp": "3/12/2016 06:35:12", "amount": 2.00},
-];
+// const expectedResult = [
+//     {"ip": "11.11.11.11", "timestamp": "3/11/2016 02:13:11", "amount": 7.25},
+//     {"ip": "22.22.22.22", "timestamp": "3/11/2016 06:35:12", "amount": 2.00},
+//     {"ip": "22.22.22.22", "timestamp": "3/12/2016 06:35:12", "amount": 2.00},
+// ];
 
 // test('test find', () => {
 //     const result = returnMaxClicksByPeriod(data);
@@ -61,4 +49,21 @@ describe('roundTimeStampToHour', () => {
         const t2 = roundTimeStampToHour("3/12/2016 06:32:42");
         expect(t1 !== t2).toBeTruthy();
     });
+    test('group the array by ip', () => {
+        const ipLookups = groupByProperty(testData, 'ip');
+        const expectedResult = {
+            "22.22.22.22": [
+                {"ip": "22.22.22.22", "timestamp": "3/11/2016 02:02:58", "amount": 7.00},
+                {"ip": "22.22.22.22", "timestamp": "3/11/2016 05:02:45", "amount": 11.00},
+                {"ip": "22.22.22.22", "timestamp": "3/12/2016 06:35:12", "amount": 2.00}
+            ],
+            "11.11.11.11": [
+                {"ip": "11.11.11.11", "timestamp": "3/11/2016 02:12:32", "amount": 6.50},
+                {"ip": "11.11.11.11", "timestamp": "3/11/2016 02:13:11", "amount": 7.25},
+            ],
+            "44.44.44.44": [
+                {"ip": "44.44.44.44", "timestamp": "3/11/2016 02:13:54", "amount": 8.75},
+            ]};
+            expect(ipLookups).toEqual(expectedResult)
+    })
 });
