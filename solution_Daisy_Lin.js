@@ -1,9 +1,10 @@
 const fs = require('fs');
+const _ = require('lodash');
 
 function returnMaxClicksByPeriod (clicks) {
-    const maxClicks = findMaxClickPerPeriod(clicks, []);
-    const clicksLookUps = groupByIp(maxClicks);
-    return checkNumberOfClicks(clicksLookUps)
+    // const maxClicks = findMaxClickPerPeriod(clicks, []);
+    // const clicksLookUps = groupByIp(maxClicks);
+    // return checkNumberOfClicks(clicksLookUps)
 }
 
 function roundTimeStampToHour(timeStamp) {
