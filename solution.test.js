@@ -1,4 +1,4 @@
-const { roundTimeStampToHour, groupByProperty } = require('./solution_Daisy_Lin.js');
+const { roundTimeStampToHour, groupByProperty, removeExcessiveClicks } = require('./solution_Daisy_Lin.js');
 
 const testData = [
     {"ip": "22.22.22.22", "timestamp": "3/11/2016 02:02:58", "amount": 7.00},
@@ -65,5 +65,46 @@ describe('roundTimeStampToHour', () => {
                 {"ip": "44.44.44.44", "timestamp": "3/11/2016 02:13:54", "amount": 8.75},
             ]};
             expect(ipLookups).toEqual(expectedResult)
+    });
+    test('remove the ip has more than 10 clicks', () => {
+        const lookups = {
+            "22.22.22.22": [
+                {"ip": "22.22.22.22", "timestamp": "3/11/2016 02:02:58", "amount": 7.00},
+                {"ip": "22.22.22.22", "timestamp": "3/11/2016 05:02:45", "amount": 11.00},
+                {"ip": "22.22.22.22", "timestamp": "3/12/2016 06:35:12", "amount": 2.00},
+                {"ip": "22.22.22.22", "timestamp": "3/11/2016 02:02:58", "amount": 7.00},
+                {"ip": "22.22.22.22", "timestamp": "3/11/2016 02:02:58", "amount": 7.00},
+                {"ip": "22.22.22.22", "timestamp": "3/11/2016 02:02:58", "amount": 7.00},
+                {"ip": "22.22.22.22", "timestamp": "3/11/2016 02:02:58", "amount": 7.00},
+                {"ip": "22.22.22.22", "timestamp": "3/11/2016 02:02:58", "amount": 7.00},
+                {"ip": "22.22.22.22", "timestamp": "3/11/2016 02:02:58", "amount": 7.00},
+                {"ip": "22.22.22.22", "timestamp": "3/11/2016 02:02:58", "amount": 7.00},
+                {"ip": "22.22.22.22", "timestamp": "3/11/2016 02:02:58", "amount": 7.00}
+            ],
+            "11.11.11.11": [
+                {"ip": "11.11.11.11", "timestamp": "3/11/2016 02:12:32", "amount": 6.50},
+                {"ip": "11.11.11.11", "timestamp": "3/11/2016 02:13:11", "amount": 7.25},
+            ],
+            "44.44.44.44": [
+                {"ip": "44.44.44.44", "timestamp": "3/11/2016 02:13:54", "amount": 8.75},
+            ]};
+        const lookUpCln = removeExcessiveClicks(lookups);
+        const expectedResult = {
+            "11.11.11.11": [
+                {"ip": "11.11.11.11", "timestamp": "3/11/2016 02:12:32", "amount": 6.50},
+                {"ip": "11.11.11.11", "timestamp": "3/11/2016 02:13:11", "amount": 7.25},
+            ],
+            "44.44.44.44": [
+                {"ip": "44.44.44.44", "timestamp": "3/11/2016 02:13:54", "amount": 8.75},
+            ]};
+            expect(lookUpCln).toEqual(expectedResult)
+    });
+    test('group the array by round up timestamp', () => {
+        const testData = [
+            {"ip": "22.22.22.22", "timestamp": "3/11/2016 02:02:58", "amount": 7.00},
+            {"ip": "11.11.11.11", "timestamp": "3/11/2016 02:13:11", "amount": 7.25},
+            {"ip": "22.22.22.22", "timestamp": "3/11/2016 05:02:45", "amount": 11.00},
+            {"ip": "22.22.22.22", "timestamp": "3/12/2016 06:35:12", "amount": 2.00}];
+        const testDataRound
     })
 });

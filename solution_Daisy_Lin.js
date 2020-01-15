@@ -40,7 +40,7 @@ function findMaxClick(clicksInPeriod) {
 function groupByProperty(clicks, property) {
     return clicks.reduce((acc, obj) => {
         const key = obj[property];
-        if (! acc[key]) {
+        if (!acc[key]) {
             acc[key] = [];
         }
         acc[key].push(obj);
@@ -48,17 +48,13 @@ function groupByProperty(clicks, property) {
     }, {})
 }
 
-function checkNumberOfClicks(clicksLookUp) {
+function removeExcessiveClicks(clicksLookUp) {
     for (let key in clicksLookUp){
         if (clicksLookUp[key].length > 10 && clicksLookUp.hasOwnProperty(key)) {
-            return {
-                ...clicksLookUp,
-                [`${key}`]: [clicksLookUp[key][0]]
-            }}
-        return {
-            ...clicksLookUp
+            delete clicksLookUp[key]
         }
     }
+    return clicksLookUp
 }
 
 function doStatistics( inputData, outputFile ) {
@@ -69,3 +65,4 @@ function doStatistics( inputData, outputFile ) {
 module.exports.doStatistics = doStatistics;
 module.exports.roundTimeStampToHour = roundTimeStampToHour;
 module.exports.groupByProperty = groupByProperty;
+module.exports.removeExcessiveClicks = removeExcessiveClicks;
