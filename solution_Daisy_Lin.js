@@ -1,7 +1,6 @@
 const fs = require('fs');
-const _ = require('lodash');
 
-function roundTimeStampToHour(timeStamp) {
+function roundTimeStampToHour( timeStamp ) {
     let dt = new Date(timeStamp);
     dt = new Date(dt.setMinutes(0));
     dt = new Date(dt.setSeconds(0));
@@ -10,14 +9,7 @@ function roundTimeStampToHour(timeStamp) {
     return dt.getTime();
 }
 
-function findExpansiveClickPerTime(clicks) {
-    const sortedClicks = clicks.sort((x, y) => new Date(y.timestamp) - new Date(x.timestamp)).reverse();
-    return sortedClicks.reduce((max, c) => {
-        return (c.amount > max.amount) ? c : max
-    }, clicks[0])
-}
-
-function groupByTimestamp(clicks) {
+function groupByTimestamp( clicks ) {
     return clicks.reduce((acc, cur) => {
         let ts = roundTimeStampToHour(cur.timestamp);
         if (!acc[ts]) {
@@ -28,11 +20,25 @@ function groupByTimestamp(clicks) {
     }, {});
 }
 
-function groupByIp(clicks) {
-    return _.groupBy(clicks,'ip')
+function groupByIp( clicks ) {
+    return clicks.reduce((acc, cur) => {
+        let ip = cur.ip;
+        if (!acc[ip]) {
+            acc[ip] = []
+        }
+        acc[ip].push(cur);
+        return acc
+    }, {});
 }
 
-function findExpansiveClickPerTimeIpLookup(clicksLookUp) {
+function findExpansiveClickPerTime( clicks ) {
+    const sortedClicks = clicks.sort((x, y) => new Date(y.timestamp) - new Date(x.timestamp)).reverse();
+    return sortedClicks.reduce((max, c) => {
+        return (c.amount > max.amount) ? c : max
+    }, clicks[0])
+}
+
+function findExpansiveClickPerTimeIpLookup( clicksLookUp ) {
     for (let key in clicksLookUp) {
         if (clicksLookUp.hasOwnProperty(key)) {
             let timeStampLookUp = groupByTimestamp(clicksLookUp[key]);
@@ -46,7 +52,7 @@ function findExpansiveClickPerTimeIpLookup(clicksLookUp) {
     return clicksLookUp
 }
 
-function removeExcessiveClicks(clicksLookUp) {
+function removeExcessiveClicks( clicksLookUp ) {
     for (let key in clicksLookUp){
         if (clicksLookUp[key].length > 10 && clicksLookUp.hasOwnProperty(key)) {
             delete clicksLookUp[key]
@@ -67,10 +73,10 @@ function aggregateClicks( clicks ) {
             }
         } return expansiveClickIpLookUp[k]
     });
-    console.log(expansiveClicksFlat);
     return expansiveClicksFlat
 }
 function saveToFile( inputData, outputFile ) {
+    const resultSet = aggregateClicks(inputData);
     fs.writeFileSync(outputFile, JSON.stringify(resultSet, null, 2));
 }
 
@@ -81,3 +87,4 @@ module.exports.removeExcessiveClicks = removeExcessiveClicks;
 module.exports.groupByTimestamp = groupByTimestamp;
 module.exports.findExpansiveClickPerTime = findExpansiveClickPerTime;
 module.exports.findExpansiveClickPerTimeIpLookup = findExpansiveClickPerTimeIpLookup;
+module.exports.saveToFile= saveToFile;

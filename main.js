@@ -1,4 +1,4 @@
 const data = require('./clicks.json');
-const { doStatistics } = require('./solution_Daisy_Lin')
+const { saveToFile } = require('./solution_Daisy_Lin');
 
-doStatistics(data, './resultSet.json');
+saveToFile(data, './resultset.json');
