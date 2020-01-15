@@ -1,24 +1,9 @@
-const { roundTimeStampToHour, groupByIp, removeExcessiveClicks,
-    groupByTimestamp, findExpansiveClickPerTime, findExpansiveClickPerTimeIpLookup } = require('./solution_Daisy_Lin.js');
-
-const testData = [
-    {"ip": "22.22.22.22", "timestamp": "3/11/2016 02:02:58", "amount": 7.00},
-    {"ip": "11.11.11.11", "timestamp": "3/11/2016 02:12:32", "amount": 6.50},
-    {"ip": "11.11.11.11", "timestamp": "3/11/2016 02:13:11", "amount": 7.25},
-    {"ip": "44.44.44.44", "timestamp": "3/11/2016 02:13:54", "amount": 8.75},
-    {"ip": "22.22.22.22", "timestamp": "3/11/2016 05:02:45", "amount": 11.00},
-    {"ip": "22.22.22.22", "timestamp": "3/12/2016 06:35:12", "amount": 2.00},
-];
-const expectedResultIncorrect = {
-    "44.44.44.44": {
-        1457679600000: [
-            {"ip": "44.44.44.44", "timestamp": "3/11/2016 02:13:54", "amount": 8.75}
-        ]},
-    "22.22.22.22": {
-        1457690400000: [
-            {"ip": "22.22.22.22", "timestamp": "3/11/2016 05:02:45", "amount": 11.00}
-            ]}
-};
+const {
+    roundTimeStampToHour, groupByIp, removeExcessiveClicks,
+    groupByTimestamp, findExpansiveClickPerTime,
+    findExpansiveClickPerTimeIpLookup, aggregateClicks
+} = require('./solution_Daisy_Lin.js');
+const data = require('./clicks.json');
 
 describe('roundTimeStampToHour', () => {
     test('same hour but different minutes should be normalized to the same hour', () => {
@@ -39,6 +24,14 @@ describe('roundTimeStampToHour', () => {
         expect(t1 !== t2).toBeTruthy();
     });
     test('group the array by ip', () => {
+        const testData = [
+            {"ip": "22.22.22.22", "timestamp": "3/11/2016 02:02:58", "amount": 7.00},
+            {"ip": "11.11.11.11", "timestamp": "3/11/2016 02:12:32", "amount": 6.50},
+            {"ip": "11.11.11.11", "timestamp": "3/11/2016 02:13:11", "amount": 7.25},
+            {"ip": "44.44.44.44", "timestamp": "3/11/2016 02:13:54", "amount": 8.75},
+            {"ip": "22.22.22.22", "timestamp": "3/11/2016 05:02:45", "amount": 11.00},
+            {"ip": "22.22.22.22", "timestamp": "3/12/2016 06:35:12", "amount": 2.00},
+        ];
         const ipLookups = groupByIp(testData);
         const expectedResult = {
             "22.22.22.22": [
@@ -52,8 +45,9 @@ describe('roundTimeStampToHour', () => {
             ],
             "44.44.44.44": [
                 {"ip": "44.44.44.44", "timestamp": "3/11/2016 02:13:54", "amount": 8.75},
-            ]};
-            expect(ipLookups).toEqual(expectedResult)
+            ]
+        };
+        expect(ipLookups).toEqual(expectedResult)
     });
     test('remove the ip has more than 10 clicks', () => {
         const lookups = {
@@ -76,7 +70,8 @@ describe('roundTimeStampToHour', () => {
             ],
             "44.44.44.44": [
                 {"ip": "44.44.44.44", "timestamp": "3/11/2016 02:13:54", "amount": 8.75},
-            ]};
+            ]
+        };
         const lookUpCln = removeExcessiveClicks(lookups);
         const expectedResult = {
             "11.11.11.11": [
@@ -85,8 +80,9 @@ describe('roundTimeStampToHour', () => {
             ],
             "44.44.44.44": [
                 {"ip": "44.44.44.44", "timestamp": "3/11/2016 02:13:54", "amount": 8.75},
-            ]};
-            expect(lookUpCln).toEqual(expectedResult)
+            ]
+        };
+        expect(lookUpCln).toEqual(expectedResult)
     });
     test('group the array by round up timestamp', () => {
         const testData = [
@@ -113,15 +109,23 @@ describe('roundTimeStampToHour', () => {
             {"ip": "22.22.22.22", "timestamp": "3/11/2016 02:02:58", "amount": 7.00},
             {"ip": "11.11.11.11", "timestamp": "3/11/2016 02:13:11", "amount": 7.25}
         ];
-        expect(findExpansiveClickPerTime(testData)).toEqual({"ip": "11.11.11.11", "timestamp": "3/11/2016 02:13:11", "amount": 7.25})
+        expect(findExpansiveClickPerTime(testData)).toEqual({
+            "ip": "11.11.11.11",
+            "timestamp": "3/11/2016 02:13:11",
+            "amount": 7.25
+        })
     });
     test('return the earliest one to result when there is a tie', () => {
         const testData = [
             {"ip": "22.22.22.22", "timestamp": "3/11/2016 02:02:58", "amount": 7.00},
             {"ip": "11.11.11.11", "timestamp": "3/11/2016 02:45:11", "amount": 7.25},
             {"ip": "11.11.11.11", "timestamp": "3/11/2016 02:13:11", "amount": 7.25}
-            ];
-        expect(findExpansiveClickPerTime(testData)).toEqual({"ip": "11.11.11.11", "timestamp": "3/11/2016 02:13:11", "amount": 7.25})
+        ];
+        expect(findExpansiveClickPerTime(testData)).toEqual({
+            "ip": "11.11.11.11",
+            "timestamp": "3/11/2016 02:13:11",
+            "amount": 7.25
+        })
     });
     test('return the lookup table of the clicks', () => {
         const testData = [
@@ -132,14 +136,18 @@ describe('roundTimeStampToHour', () => {
         const expectedResult = {
             "44.44.44.44": [
                 {"ip": "44.44.44.44", "timestamp": "3/11/2016 02:13:54", "amount": 8.75}
-                ],
+            ],
             "22.22.22.22": [
                 {"ip": "22.22.22.22", "timestamp": "3/12/2016 06:35:12", "amount": 2.00},
                 {"ip": "22.22.22.22", "timestamp": "3/11/2016 05:02:45", "amount": 11.00},
-                ]
+            ]
         };
         const ipLookips = groupByIp(testData);
         const resultDate = findExpansiveClickPerTimeIpLookup(ipLookips);
         expect(resultDate).toEqual(expectedResult)
+    });
+    test('return the flatten array and should be the subset of the original', () => {
+        const expectedResult = aggregateClicks(data);
+        expect(data).toEqual(expect.arrayContaining(expectedResult))
     })
 });

@@ -40,7 +40,6 @@ function findExpansiveClickPerTimeIpLookup(clicksLookUp) {
             for (let t in timeStampLookUp) {
                 expansiveClicksPerTime.push(findExpansiveClickPerTime(timeStampLookUp[t]))
             }
-            console.log(expansiveClicksPerTime);
             clicksLookUp[key] = expansiveClicksPerTime;
             }
         }
@@ -56,17 +55,26 @@ function removeExcessiveClicks(clicksLookUp) {
     return clicksLookUp
 }
 
-function aggreateClick( clicks ) {
+function aggregateClicks( clicks ) {
     const ipLookUp = groupByIp(clicks);
     const ipLookUpCln = removeExcessiveClicks(ipLookUp);
     const expansiveClickIpLookUp = findExpansiveClickPerTimeIpLookup(ipLookUpCln);
-    return Object.values(expansiveClickIpLookUp).flat();
+    const expansiveClicksFlat = [];
+    Object.keys(expansiveClickIpLookUp).map(k => {
+        if (Array.isArray(expansiveClickIpLookUp[k])) {
+            for (i = 0; i < expansiveClickIpLookUp[k].length; i++) {
+                expansiveClicksFlat.push(expansiveClickIpLookUp[k][i])
+            }
+        } return expansiveClickIpLookUp[k]
+    });
+    console.log(expansiveClicksFlat);
+    return expansiveClicksFlat
 }
 function saveToFile( inputData, outputFile ) {
     fs.writeFileSync(outputFile, JSON.stringify(resultSet, null, 2));
 }
 
-module.exports.doStatistics = aggreateClick;
+module.exports.aggregateClicks = aggregateClicks;
 module.exports.roundTimeStampToHour = roundTimeStampToHour;
 module.exports.groupByIp = groupByIp;
 module.exports.removeExcessiveClicks = removeExcessiveClicks;
