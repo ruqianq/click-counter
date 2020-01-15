@@ -25,10 +25,11 @@ function roundTimeStampToHour(timeStamp) {
     // }
     // return maxClicks
 
-function findMaxClick(clicksInPeriod) {
-    return clicksInPeriod.reduce((max, c) => {
+function findExpansiveClick(clicks) {
+    const sortedClicks = clicks.sort((x, y) => new Date(y.timestamp) - new Date(x.timestamp)).reverse();
+    return sortedClicks.reduce((max, c) => {
         return (c.amount > max.amount) ? c : max
-    }, clicksInPeriod[0])
+    }, clicks[0])
 }
 
 function groupByTimestamp(clicks) {
@@ -64,4 +65,5 @@ module.exports.doStatistics = doStatistics;
 module.exports.roundTimeStampToHour = roundTimeStampToHour;
 module.exports.groupByProperty = groupByIp;
 module.exports.removeExcessiveClicks = removeExcessiveClicks;
-module.exports.groupByTimestamp = groupByTimestamp
+module.exports.groupByTimestamp = groupByTimestamp;
+module.exports.findExpansiveClick = findExpansiveClick;

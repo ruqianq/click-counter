@@ -1,4 +1,4 @@
-const { roundTimeStampToHour, groupByProperty, removeExcessiveClicks, groupByTimestamp } = require('./solution_Daisy_Lin.js');
+const { roundTimeStampToHour, groupByProperty, removeExcessiveClicks, groupByTimestamp, findExpansiveClick } = require('./solution_Daisy_Lin.js');
 
 const testData = [
     {"ip": "22.22.22.22", "timestamp": "3/11/2016 02:02:58", "amount": 7.00},
@@ -118,5 +118,20 @@ describe('roundTimeStampToHour', () => {
             ]
         };
         expect(groupByTimestamp(testData)).toEqual(expectedResult);
+    });
+    test('find the most expansive click', () => {
+        const testData = [
+            {"ip": "22.22.22.22", "timestamp": "3/11/2016 02:02:58", "amount": 7.00},
+            {"ip": "11.11.11.11", "timestamp": "3/11/2016 02:13:11", "amount": 7.25}
+        ];
+        expect(findExpansiveClick(testData)).toEqual({"ip": "11.11.11.11", "timestamp": "3/11/2016 02:13:11", "amount": 7.25})
+    });
+    test('return the earliest one to result when there is a tie', () => {
+        const testData = [
+            {"ip": "22.22.22.22", "timestamp": "3/11/2016 02:02:58", "amount": 7.00},
+            {"ip": "11.11.11.11", "timestamp": "3/11/2016 02:45:11", "amount": 7.25},
+            {"ip": "11.11.11.11", "timestamp": "3/11/2016 02:13:11", "amount": 7.25}
+            ];
+        expect(findExpansiveClick(testData)).toEqual({"ip": "11.11.11.11", "timestamp": "3/11/2016 02:13:11", "amount": 7.25})
     })
 });
