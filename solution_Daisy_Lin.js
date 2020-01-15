@@ -10,21 +10,6 @@ function roundTimeStampToHour(timeStamp) {
     return dt.getTime();
 }
 
-
-    // const startPeriod = new Date(clicks[0].timestamp).getHours() + 1;
-    // const clicksInPeriod = [];
-    // for (let i = 0; i < clicks.length; i++) {
-    //     const clickTime = new Date(clicks[i].timestamp);
-    //     if (clickTime.getHours() < startPeriod && clickTime.getMinutes() <= 59 && clickTime.getSeconds() <= 59) {
-    //         clicksInPeriod.push(clicks[i])
-    //     } else {
-    //         const maxClick = findMaxClick(clicksInPeriod);
-    //         maxClicks.push(maxClick);
-    //         return findMaxClickPerPeriod(clicks.slice(i), maxClicks)
-    //     }
-    // }
-    // return maxClicks
-
 function findExpansiveClick(clicks) {
     const sortedClicks = clicks.sort((x, y) => new Date(y.timestamp) - new Date(x.timestamp)).reverse();
     return sortedClicks.reduce((max, c) => {
@@ -47,6 +32,15 @@ function groupByIp(clicks) {
     return _.groupBy(clicks,'ip')
 }
 
+function createIpTimestampLookup(clicksLookUp) {
+    for (let key in clicksLookUp) {
+        if (clicksLookUp.hasOwnProperty(key)) {
+            clicksLookUp[key] = groupByTimestamp(clicksLookUp[key]);
+            }
+        }
+    return clicksLookUp
+}
+
 function removeExcessiveClicks(clicksLookUp) {
     for (let key in clicksLookUp){
         if (clicksLookUp[key].length > 10 && clicksLookUp.hasOwnProperty(key)) {
@@ -63,7 +57,8 @@ function doStatistics( inputData, outputFile ) {
 
 module.exports.doStatistics = doStatistics;
 module.exports.roundTimeStampToHour = roundTimeStampToHour;
-module.exports.groupByProperty = groupByIp;
+module.exports.groupByIp = groupByIp;
 module.exports.removeExcessiveClicks = removeExcessiveClicks;
 module.exports.groupByTimestamp = groupByTimestamp;
 module.exports.findExpansiveClick = findExpansiveClick;
+module.exports.createIpTimestampLookup = createIpTimestampLookup
