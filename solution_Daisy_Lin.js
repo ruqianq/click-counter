@@ -10,7 +10,7 @@ function roundTimeStampToHour(timeStamp) {
     return dt.getTime();
 }
 
-function findExpansiveClick(clicks) {
+function findExpansiveClickPerTime(clicks) {
     const sortedClicks = clicks.sort((x, y) => new Date(y.timestamp) - new Date(x.timestamp)).reverse();
     return sortedClicks.reduce((max, c) => {
         return (c.amount > max.amount) ? c : max
@@ -35,7 +35,12 @@ function groupByIp(clicks) {
 function createIpTimestampLookup(clicksLookUp) {
     for (let key in clicksLookUp) {
         if (clicksLookUp.hasOwnProperty(key)) {
-            clicksLookUp[key] = groupByTimestamp(clicksLookUp[key]);
+            let timeStampLookUp = groupByTimestamp(clicksLookUp[key]);
+            // for (let t in timeStampLookUp) {
+            //     timeStampLookUp[t] = findExpansiveClickPerTime(timeStampLookUp[t])
+            // }
+            console.log(expansiveClicksPerTime);
+            clicksLookUp[key] = expansiveClicksPerTime;
             }
         }
     return clicksLookUp
@@ -50,15 +55,19 @@ function removeExcessiveClicks(clicksLookUp) {
     return clicksLookUp
 }
 
-function doStatistics( inputData, outputFile ) {
-    const resultSet = returnMaxClicksByPeriod(data);
+function aggreateClick( inputData, outputFile ) {
+    const ipLookUp = groupByIp(inputData);
+    const ipLookUpCln = removeExcessiveClicks(ipLookUp);
+    const ipTimeLookUp = createIpTimestampLookup(ipLookUpCln);
+
+    // const resultSet = returnMaxClicksByPeriod(inputData);
     fs.writeFileSync(outputFile, JSON.stringify(resultSet, null, 2));
 }
 
-module.exports.doStatistics = doStatistics;
+module.exports.doStatistics = aggreateClick;
 module.exports.roundTimeStampToHour = roundTimeStampToHour;
 module.exports.groupByIp = groupByIp;
 module.exports.removeExcessiveClicks = removeExcessiveClicks;
 module.exports.groupByTimestamp = groupByTimestamp;
-module.exports.findExpansiveClick = findExpansiveClick;
-module.exports.createIpTimestampLookup = createIpTimestampLookup
+module.exports.findExpansiveClickPerTime = findExpansiveClickPerTime;
+module.exports.createIpTimestampLookup = createIpTimestampLookup;
