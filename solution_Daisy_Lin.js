@@ -9,6 +9,7 @@ function roundTimeStampToHour( timeStamp ) {
     return dt.getTime();
 }
 
+// lodash's _.groupBy can also achieve the same result
 function groupByTimestamp( clicks ) {
     return clicks.reduce((acc, cur) => {
         let ts = roundTimeStampToHour(cur.timestamp);

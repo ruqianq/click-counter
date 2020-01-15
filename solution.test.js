@@ -127,7 +127,7 @@ describe('roundTimeStampToHour', () => {
             "amount": 7.25
         })
     });
-    test('return the lookup table of the clicks', () => {
+    test('return the ip lookup table of the most expansive clicks array from each period', () => {
         const testData = [
             {"ip": "44.44.44.44", "timestamp": "3/11/2016 02:13:54", "amount": 8.75},
             {"ip": "22.22.22.22", "timestamp": "3/12/2016 06:35:12", "amount": 2.00},
@@ -142,8 +142,8 @@ describe('roundTimeStampToHour', () => {
                 {"ip": "22.22.22.22", "timestamp": "3/11/2016 05:02:45", "amount": 11.00},
             ]
         };
-        const ipLookips = groupByIp(testData);
-        const resultDate = findExpansiveClickPerTimeIpLookup(ipLookips);
+        const ipLookUps = groupByIp(testData);
+        const resultDate = findExpansiveClickPerTimeIpLookup(ipLookUps);
         expect(resultDate).toEqual(expectedResult)
     });
     test('return the flatten array and should be the subset of the original', () => {
