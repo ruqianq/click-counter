@@ -1,12 +1,6 @@
 const fs = require('fs');
 const _ = require('lodash');
 
-function returnMaxClicksByPeriod (clicks) {
-    // const maxClicks = findMaxClickPerPeriod(clicks, []);
-    // const clicksLookUps = groupByIp(maxClicks);
-    // return checkNumberOfClicks(clicksLookUps)
-}
-
 function roundTimeStampToHour(timeStamp) {
     let dt = new Date(timeStamp);
     dt = new Date(dt.setMinutes(0));
@@ -37,15 +31,19 @@ function findMaxClick(clicksInPeriod) {
     }, clicksInPeriod[0])
 }
 
-function groupByProperty(clicks, property) {
-    return clicks.reduce((acc, obj) => {
-        const key = obj[property];
-        if (!acc[key]) {
-            acc[key] = [];
+function groupByTimestamp(clicks) {
+    return clicks.reduce((acc, cur) => {
+        let ts = roundTimeStampToHour(cur.timestamp);
+        if (!acc[ts]) {
+            acc[ts] = []
         }
-        acc[key].push(obj);
+        acc[ts].push(cur);
         return acc
-    }, {})
+    }, {});
+}
+
+function groupByIp(clicks) {
+    return _.groupBy(clicks,'ip')
 }
 
 function removeExcessiveClicks(clicksLookUp) {
@@ -64,5 +62,6 @@ function doStatistics( inputData, outputFile ) {
 
 module.exports.doStatistics = doStatistics;
 module.exports.roundTimeStampToHour = roundTimeStampToHour;
-module.exports.groupByProperty = groupByProperty;
+module.exports.groupByProperty = groupByIp;
 module.exports.removeExcessiveClicks = removeExcessiveClicks;
+module.exports.groupByTimestamp = groupByTimestamp

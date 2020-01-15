@@ -1,4 +1,4 @@
-const { roundTimeStampToHour, groupByProperty, removeExcessiveClicks } = require('./solution_Daisy_Lin.js');
+const { roundTimeStampToHour, groupByProperty, removeExcessiveClicks, groupByTimestamp } = require('./solution_Daisy_Lin.js');
 
 const testData = [
     {"ip": "22.22.22.22", "timestamp": "3/11/2016 02:02:58", "amount": 7.00},
@@ -50,7 +50,7 @@ describe('roundTimeStampToHour', () => {
         expect(t1 !== t2).toBeTruthy();
     });
     test('group the array by ip', () => {
-        const ipLookups = groupByProperty(testData, 'ip');
+        const ipLookups = groupByProperty(testData);
         const expectedResult = {
             "22.22.22.22": [
                 {"ip": "22.22.22.22", "timestamp": "3/11/2016 02:02:58", "amount": 7.00},
@@ -105,6 +105,18 @@ describe('roundTimeStampToHour', () => {
             {"ip": "11.11.11.11", "timestamp": "3/11/2016 02:13:11", "amount": 7.25},
             {"ip": "22.22.22.22", "timestamp": "3/11/2016 05:02:45", "amount": 11.00},
             {"ip": "22.22.22.22", "timestamp": "3/12/2016 06:35:12", "amount": 2.00}];
-        const testDataRound
+        const expectedResult = {
+            '1457679600000': [
+                {"ip": "22.22.22.22", "timestamp": "3/11/2016 02:02:58", "amount": 7.00},
+                {"ip": "11.11.11.11", "timestamp": "3/11/2016 02:13:11", "amount": 7.25}
+            ],
+            '1457690400000': [
+                {"ip": "22.22.22.22", "timestamp": "3/11/2016 05:02:45", "amount": 11.00}
+            ],
+            '1457780400000': [
+                {"ip": "22.22.22.22", "timestamp": "3/12/2016 06:35:12", "amount": 2.00}
+            ]
+        };
+        expect(groupByTimestamp(testData)).toEqual(expectedResult);
     })
 });
