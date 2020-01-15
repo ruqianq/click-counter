@@ -56,13 +56,13 @@ function removeExcessiveClicks(clicksLookUp) {
     return clicksLookUp
 }
 
-function aggreateClick( inputData, outputFile ) {
-    const ipLookUp = groupByIp(inputData);
+function aggreateClick( clicks ) {
+    const ipLookUp = groupByIp(clicks);
     const ipLookUpCln = removeExcessiveClicks(ipLookUp);
     const expansiveClickIpLookUp = findExpansiveClickPerTimeIpLookup(ipLookUpCln);
-
-
-    // const resultSet = returnMaxClicksByPeriod(inputData);
+    return Object.values(expansiveClickIpLookUp).flat();
+}
+function saveToFile( inputData, outputFile ) {
     fs.writeFileSync(outputFile, JSON.stringify(resultSet, null, 2));
 }
 
