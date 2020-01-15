@@ -1,5 +1,5 @@
 const { roundTimeStampToHour, groupByIp, removeExcessiveClicks,
-    groupByTimestamp, findExpansiveClickPerTime, createIpTimestampLookup } = require('./solution_Daisy_Lin.js');
+    groupByTimestamp, findExpansiveClickPerTime, findExpansiveClickPerTimeIpLookup } = require('./solution_Daisy_Lin.js');
 
 const testData = [
     {"ip": "22.22.22.22", "timestamp": "3/11/2016 02:02:58", "amount": 7.00},
@@ -126,20 +126,20 @@ describe('roundTimeStampToHour', () => {
     test('return the lookup table of the clicks', () => {
         const testData = [
             {"ip": "44.44.44.44", "timestamp": "3/11/2016 02:13:54", "amount": 8.75},
+            {"ip": "22.22.22.22", "timestamp": "3/12/2016 06:35:12", "amount": 2.00},
             {"ip": "22.22.22.22", "timestamp": "3/11/2016 05:02:45", "amount": 11.00},
         ];
         const expectedResult = {
-            "44.44.44.44": {
-                1457679600000: [
-                    {"ip": "44.44.44.44", "timestamp": "3/11/2016 02:13:54", "amount": 8.75}
-                ]},
-            "22.22.22.22": {
-                1457690400000: [
-                    {"ip": "22.22.22.22", "timestamp": "3/11/2016 05:02:45", "amount": 11.00}
-                ]}
+            "44.44.44.44": [
+                {"ip": "44.44.44.44", "timestamp": "3/11/2016 02:13:54", "amount": 8.75}
+                ],
+            "22.22.22.22": [
+                {"ip": "22.22.22.22", "timestamp": "3/12/2016 06:35:12", "amount": 2.00},
+                {"ip": "22.22.22.22", "timestamp": "3/11/2016 05:02:45", "amount": 11.00},
+                ]
         };
         const ipLookips = groupByIp(testData);
-        const resultDate = createIpTimestampLookup(ipLookips);
+        const resultDate = findExpansiveClickPerTimeIpLookup(ipLookips);
         expect(resultDate).toEqual(expectedResult)
     })
 });
